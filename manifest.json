@@ -1,0 +1,21 @@
+{
+  "name": "90天重启计划",
+  "short_name": "90天计划",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f6f7f9",
+  "theme_color": "#111827",
+  "description": "90天身体、事业与生活执行打卡",
+  "icons": [
+    {
+      "src": "icon-180.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

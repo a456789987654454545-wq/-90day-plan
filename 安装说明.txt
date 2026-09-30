@@ -1,0 +1,23 @@
+90天重启计划 · iPhone PWA 安装说明
+
+这不是 App Store 安装包，而是一个可安装到 iPhone 主屏幕、全屏运行、安装后可离线使用的 PWA。
+
+一次性部署：
+1. 把本 ZIP 解压。
+2. 将整个文件夹上传到任意支持 HTTPS 的静态网页托管服务，例如 GitHub Pages、Cloudflare Pages、Netlify。
+3. 用 iPhone 的 Safari 打开生成的网址。
+4. 点 Safari 底部“分享”按钮。
+5. 选择“添加到主屏幕”。
+6. 主屏幕会出现「90天计划」图标。以后直接点图标，不需要打开 ChatGPT。
+
+数据：
+- 打卡数据只保存在当前 iPhone 的本地网页存储中。
+- “设置”页可导出 JSON 备份，也可导入恢复。
+- 如果删除网站数据/卸载该网页 App，未备份的数据可能丢失。
+
+目录：
+index.html      主程序
+manifest.json   iPhone/PWA 安装信息
+sw.js           离线缓存
+icon-180.png    iPhone 图标
+icon-512.png    PWA 图标

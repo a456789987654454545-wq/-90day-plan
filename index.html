@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#111827">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="90天计划">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="manifest" href="manifest.json">
+<title>90天重启计划</title>
+<style>
+:root{--bg:#f5f6f8;--card:#fff;--text:#111827;--muted:#6b7280;--line:#e5e7eb;--dark:#111827;--green:#15803d;--amber:#b45309;--red:#b91c1c}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC","Microsoft YaHei",sans-serif}
+body{padding-bottom:calc(84px + env(safe-area-inset-bottom))}
+.top{position:sticky;top:0;z-index:10;background:rgba(245,246,248,.94);backdrop-filter:blur(18px);padding:calc(10px + env(safe-area-inset-top)) 16px 10px;border-bottom:1px solid rgba(229,231,235,.9)}
+.toprow{display:flex;justify-content:space-between;align-items:center;gap:10px}
+h1{font-size:22px;margin:0}.date{font-size:12px;color:var(--muted);margin-top:3px}
+.pill{background:var(--dark);color:white;border-radius:999px;padding:7px 10px;font-size:12px;font-weight:700}
+.wrap{padding:14px 14px 0;max-width:700px;margin:auto}
+.hero{background:var(--dark);color:#fff;border-radius:20px;padding:18px}
+.hero .small{font-size:12px;opacity:.72}.hero .big{font-size:34px;font-weight:800;margin:4px 0 2px}
+.bar{height:8px;border-radius:999px;background:rgba(255,255,255,.18);overflow:hidden;margin-top:10px}.bar>div{height:100%;background:#fff;width:0}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:10px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px}
+.metric .k{font-size:12px;color:var(--muted)}.metric .v{font-size:22px;font-weight:800;margin-top:4px}
+.section{font-size:17px;font-weight:800;margin:18px 2px 9px}
+.task{display:flex;gap:11px;align-items:flex-start;padding:12px 0;border-bottom:1px solid #eef0f2}
+.task:last-child{border:0}.task input{width:22px;height:22px;margin-top:1px;accent-color:#111827}.tt{font-weight:700;font-size:15px}.td{font-size:12px;color:var(--muted);line-height:1.45;margin-top:3px}
+.inputs{display:grid;grid-template-columns:1fr 1fr;gap:10px}.field label{font-size:11px;color:var(--muted)}
+input[type=number],textarea{width:100%;margin-top:5px;border:1px solid var(--line);background:#fff;border-radius:12px;padding:12px;font-size:16px;outline:none}
+textarea{min-height:96px;resize:none}
+button{border:0;border-radius:13px;padding:13px 14px;font-size:15px;font-weight:750}
+.primary{background:#111827;color:#fff;width:100%;margin-top:10px}.secondary{background:#fff;border:1px solid var(--line);color:#111827;width:100%;margin-top:9px}
+.notice{font-size:13px;line-height:1.55;color:var(--muted)} .good{color:var(--green);font-weight:800}.warn{color:var(--amber);font-weight:800}.bad{color:var(--red);font-weight:800}
+.bottom{position:fixed;bottom:0;left:0;right:0;z-index:20;background:rgba(255,255,255,.96);backdrop-filter:blur(18px);border-top:1px solid var(--line);padding:7px 10px calc(7px + env(safe-area-inset-bottom));display:flex;justify-content:space-around}
+.nav{font-size:11px;color:var(--muted);text-align:center;padding:5px 12px;border-radius:10px}.nav b{display:block;font-size:19px;line-height:20px;margin-bottom:3px}.nav.active{color:#111827;font-weight:800}
+.screen{display:none}.screen.active{display:block}
+.daystrip{display:flex;gap:7px;overflow:auto;padding:2px 0 5px}.daychip{min-width:72px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:9px 8px;text-align:center;font-size:12px}.daychip.active{background:#111827;color:#fff;border-color:#111827}.daychip small{display:block;margin-top:2px;opacity:.65}
+hr{border:0;border-top:1px solid var(--line);margin:12px 0}
+.filebtn{display:block;text-align:center;background:#fff;border:1px solid var(--line);padding:12px;border-radius:13px;font-weight:700;margin-top:9px}
+#fileImport{display:none}
+</style>
+</head>
+<body>
+<div class="top">
+ <div class="toprow">
+  <div><h1>90天重启计划</h1><div class="date" id="topDate"></div></div>
+  <div class="pill" id="dayPill">Day 1</div>
+ </div>
+</div>
+
+<div class="wrap">
+<section id="home" class="screen active">
+ <div class="hero">
+  <div class="small">主计划 · 2026.10.01 — 2026.12.29</div>
+  <div class="big" id="heroDay">Day 1 / 90</div>
+  <div class="small" id="phaseText">第一阶段：游戏上线冲刺</div>
+  <div class="bar"><div id="mainBar"></div></div>
+ </div>
+ <div class="grid">
+  <div class="card metric"><div class="k">今日完成率</div><div class="v" id="todayPct">0%</div></div>
+  <div class="card metric"><div class="k">连续达标</div><div class="v" id="streak">0天</div></div>
+  <div class="card metric"><div class="k">今日香烟上限</div><div class="v" id="smokeLimit">8支</div></div>
+  <div class="card metric"><div class="k">今日步数目标</div><div class="v" id="stepsTarget">8000</div></div>
+ </div>
+ <div class="section">今天只做这些</div>
+ <div class="card" id="todayTasks"></div>
+ <div class="section">身体记录</div>
+ <div class="card">
+  <div class="inputs">
+   <div class="field"><label>体重 kg<input id="weight" type="number" step=".1"></label></div>
+   <div class="field"><label>晨间血糖 mmol/L<input id="glucose" type="number" step=".1"></label></div>
+   <div class="field"><label>步数<input id="steps" type="number" step="100"></label></div>
+   <div class="field"><label>香烟 支<input id="smokes" type="number" step="1"></label></div>
+   <div class="field"><label>睡眠 小时<input id="sleep" type="number" step=".1"></label></div>
+   <div class="field"><label>腰围 cm<input id="waist" type="number" step=".1"></label></div>
+  </div>
+  <button class="primary" onclick="saveMetrics()">保存身体数据</button>
+ </div>
+ <div class="section">今天一句话复盘</div>
+ <div class="card">
+  <textarea id="note" placeholder="游戏/自媒体推进了什么？训练怎么样？血糖和精神状态如何？陪妻子了吗？"></textarea>
+  <button class="primary" onclick="saveNote()">保存复盘</button>
+ </div>
+ <div class="section">系统判断</div>
+ <div class="card notice" id="judge">完成任务后自动判断。</div>
+</section>
+
+<section id="calendar" class="screen">
+ <div class="section" style="margin-top:2px">日期</div>
+ <div class="daystrip" id="daystrip"></div>
+ <div class="card">
+   <div style="font-weight:800;font-size:18px" id="selectedTitle"></div>
+   <div class="date" id="selectedFocus"></div>
+   <hr>
+   <div id="selectedTasks"></div>
+ </div>
+</section>
+
+<section id="stats" class="screen">
+ <div class="section" style="margin-top:2px">执行数据</div>
+ <div class="grid">
+  <div class="card metric"><div class="k">累计达标天数</div><div class="v" id="daysPassed">0</div></div>
+  <div class="card metric"><div class="k">平均完成率</div><div class="v" id="avgPct">0%</div></div>
+  <div class="card metric"><div class="k">最近体重</div><div class="v" id="lastWeight">—</div></div>
+  <div class="card metric"><div class="k">最近血糖</div><div class="v" id="lastGlucose">—</div></div>
+ </div>
+ <div class="section">阶段目标</div>
+ <div class="card notice">
+  <b>10/1–10/17：</b>游戏完整可发行版本 + 身体启动 + 戒烟。<br><br>
+  <b>10/18–11/14：</b>正式减脂增肌 + 自媒体稳定生产。<br><br>
+  <b>11/15–12/12：</b>加强足球专项与间歇跑。<br><br>
+  <b>12/13–12/29：</b>90天收官，腹肌明显、体能继续提高。<br><br>
+  <b>12/30–1/31：</b>33天巩固冲刺，目标向120分钟足球能力推进。
+ </div>
+</section>
+
+<section id="settings" class="screen">
+ <div class="section" style="margin-top:2px">数据与安装</div>
+ <div class="card">
+  <div class="notice">
+   所有打卡数据默认只保存在这台 iPhone 的本地浏览器/App空间，不上传服务器。
+  </div>
+  <button class="primary" onclick="exportData()">导出备份 JSON</button>
+  <label class="filebtn" for="fileImport">导入备份 JSON</label>
+  <input id="fileImport" type="file" accept="application/json" onchange="importData(event)">
+  <button class="secondary" onclick="clearAll()">清空全部数据</button>
+ </div>
+ <div class="section">添加到主屏幕</div>
+ <div class="card notice">
+   首次用 Safari 打开部署后的网址 → 点底部“分享” → “添加到主屏幕” → 添加。以后直接点主屏幕上的「90天计划」，就是独立全屏 App。安装后可离线打开。
+ </div>
+</section>
+</div>
+
+<div class="bottom">
+ <div class="nav active" onclick="show('home',this)"><b>✓</b>今天</div>
+ <div class="nav" onclick="show('calendar',this)"><b>▦</b>计划</div>
+ <div class="nav" onclick="show('stats',this)"><b>⌁</b>数据</div>
+ <div class="nav" onclick="show('settings',this)"><b>⚙</b>设置</div>
+</div>
+
+<script>
+const START=new Date('2026-10-01T00:00:00');
+const END90=new Date('2026-12-29T00:00:00');
+const ENDALL=new Date('2027-01-31T00:00:00');
+const STORE='restart90_v2_';
+const detailed = {
+1:['冻结Scope + 上肢A',['晨间基线｜体重、血糖、腰围、三面照片','户外走路20分钟','游戏深度开发：冻结Scope','午饭后走15分钟','游戏：跑通开局→成长→结局→重开','上肢A + 坡度走20分钟','晚饭后走15分钟','盆底训练8分钟','陪妻子≥45分钟','23:45前睡']],
+2:['核心玩法闭环① + 下肢A',['晨间记录','户外走路20分钟','游戏：核心操作/资源/成长/事件','午饭后走15分钟','游戏：不新增花哨系统','下肢A + 轻松游泳20分钟','晚饭后走15分钟','香烟≤8支','陪妻子≥45分钟','23:45前睡']],
+3:['核心玩法闭环② + 足球心肺',['晨间记录','户外走路20分钟','游戏：完整玩完一局','午饭后走15分钟','足球心肺40分钟','6×15秒加速跑','核心训练','晚饭后走15分钟','香烟≤8支','盆底训练8分钟','陪妻子≥45分钟','23:45前睡']],
+4:['内容填充 + 上肢B',['晨间记录','户外走路20分钟','游戏：事件/NPC/数值/文本/基础美术','禁止新增大系统','午饭后走15分钟','上肢B + Zone2游泳20分钟','晚饭后走15分钟','香烟≤8支','陪妻子≥45分钟','23:45前睡']],
+5:['第一轮完整内测 + 下肢B',['晨间记录','户外走路20分钟','香烟上限降至6支','完整内测至少3局','午饭后走15分钟','下肢B + 轻松游泳20–25分钟','晚饭后走15分钟','盆底训练8分钟','陪妻子≥45分钟','23:45前睡']],
+6:['修内测问题 + 足球耐力',['晨间记录','户外走路20分钟','Bug优先级：崩溃>卡死>存档>玩法>数值>UI>美术','午饭后走15分钟','足球耐力约60分钟','拉伸10分钟','晚饭后走15分钟','香烟≤6支','陪妻子≥45分钟','23:45前睡']],
+7:['主动恢复 + 第一周复盘',['晨间记录','主动恢复：45分钟走路或30分钟轻松游泳','全身活动20分钟','计算7天平均体重','重新测腰围','复盘CGM','复盘力量','统计本周香烟','游戏验收：必须从头玩到尾','身体状态五问','陪妻子≥45分钟','23:45前睡']]
+};
+
+function fmt(d){return d.toISOString().slice(0,10)}
+function dnum(date){return Math.floor((date-START)/86400000)+1}
+function dateForDay(n){let d=new Date(START); d.setDate(d.getDate()+n-1); return d}
+function getDayData(n){try{return JSON.parse(localStorage.getItem(STORE+n))||{}}catch(e){return {}}}
+function setDayData(n,x){localStorage.setItem(STORE+n,JSON.stringify(x))}
+function currentDay(){
+ let n=dnum(new Date());
+ if(n<1)n=1;if(n>123)n=123;return n;
+}
+function phase(n){
+ if(n<=17)return '第一阶段：游戏上线冲刺';
+ if(n<=45)return '第二阶段：减脂增肌 + 自媒体';
+ if(n<=73)return '第三阶段：足球专项强化';
+ if(n<=90)return '第四阶段：90天收官';
+ return '33天巩固冲刺';
+}
+function smokeLimit(n){
+ if(n<=4)return 8;if(n<=7)return 6;if(n<=11)return 4;if(n<=14)return 2;return 0;
+}
+function stepTarget(n){return n<=4?8000:n<=17?9000:10000}
+function weekdayTasks(n){
+ const d=dateForDay(n), w=d.getDay();
+ const common=['晨间记录：体重 + 血糖/CGM','户外走路20分钟','三餐后至少2次步行10–15分钟','蛋白质120–130g','完成当天事业深度工作','陪妻子≥45分钟','按计划控制香烟','睡眠≥8小时'];
+ if(n<=17){
+  const train={0:'主动恢复30–45分钟',1:'上肢力量 + Zone2',2:'下肢力量 + 游泳',3:'足球/跑步心肺 + 核心',4:'上肢力量 + Zone2',5:'下肢力量 + 游泳',6:'足球耐力'}[w];
+  return ['游戏冲刺：只做上线必须项',train,...common];
+ }
+ const train={0:'主动恢复30–45分钟 + 拉伸',1:'上肢A + Zone2 25–30分钟',2:'下肢A + 轻松游泳20–30分钟',3:'足球心肺 + 核心',4:'上肢B + Zone2 20–30分钟',5:'下肢B + 轻松游泳',6:'足球专项/长课'}[w];
+ return [train,...common];
+}
+function tasksFor(n){return detailed[n]?detailed[n][1]:weekdayTasks(n)}
+function focusFor(n){return detailed[n]?detailed[n][0]:phase(n)}
+function pctFor(n){const t=tasksFor(n),d=getDayData(n),a=d.tasks||[];return t.length?Math.round(a.filter(Boolean).length/t.length*100):0}
+function show(id,el){
+ document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));
+ document.getElementById(id).classList.add('active');
+ document.querySelectorAll('.nav').forEach(x=>x.classList.remove('active'));el.classList.add('active');
+ if(id==='calendar')renderCalendar(selectedDay);if(id==='stats')renderStats();
+}
+function toggle(n,i,v){
+ const d=getDayData(n),a=d.tasks||[];a[i]=v;d.tasks=a;setDayData(n,d);renderHome(); if(document.getElementById('calendar').classList.contains('active'))renderCalendar(n);
+}
+function taskHTML(n,target){
+ const d=getDayData(n),a=d.tasks||[],t=tasksFor(n);
+ target.innerHTML='';
+ t.forEach((x,i)=>{
+  const parts=x.split('｜');const row=document.createElement('label');row.className='task';
+  row.innerHTML=`<input type="checkbox" ${a[i]?'checked':''} onchange="toggle(${n},${i},this.checked)"><div><div class="tt">${parts[0]}</div>${parts[1]?`<div class="td">${parts[1]}</div>`:''}</div>`;
+  target.appendChild(row);
+ })
+}
+let selectedDay=currentDay();
+function renderHome(){
+ const n=currentDay(),d=dateForDay(n),data=getDayData(n);
+ document.getElementById('topDate').textContent=d.toLocaleDateString('zh-CN',{year:'numeric',month:'long',day:'numeric',weekday:'short'});
+ document.getElementById('dayPill').textContent='Day '+n;
+ document.getElementById('heroDay').textContent=`Day ${Math.min(n,90)} / 90`;
+ document.getElementById('phaseText').textContent=phase(n);
+ document.getElementById('mainBar').style.width=(Math.min(n,90)/90*100)+'%';
+ document.getElementById('todayPct').textContent=pctFor(n)+'%';
+ document.getElementById('smokeLimit').textContent=smokeLimit(n)+'支';
+ document.getElementById('stepsTarget').textContent=stepTarget(n);
+ let s=0;for(let i=n;i>=1;i--){if(pctFor(i)>=80)s++;else break}
+ document.getElementById('streak').textContent=s+'天';
+ taskHTML(n,document.getElementById('todayTasks'));
+ ['weight','glucose','steps','smokes','sleep','waist','note'].forEach(id=>document.getElementById(id).value=data[id]??'');
+ let j=`今日完成率 <b>${pctFor(n)}%</b>。`;
+ if(pctFor(n)>=80)j+=` <span class="good">今天达标。</span>`;
+ else if(pctFor(n)>=50)j+=` <span class="warn">还差一点，先补关键任务。</span>`;
+ else j+=` <span class="bad">执行度偏低，先完成事业主线、训练/恢复和睡眠。</span>`;
+ if(data.smokes!==undefined && data.smokes!=='') j += Number(data.smokes)<=smokeLimit(n)?' 香烟控制达标。':` <span class="bad">香烟超上限。</span>`;
+ if(data.sleep!==undefined && data.sleep!=='') j += Number(data.sleep)>=8?' 睡眠达标。':` <span class="warn">睡眠不足8小时。</span>`;
+ document.getElementById('judge').innerHTML=j;
+}
+function saveMetrics(){
+ const n=currentDay(),d=getDayData(n);['weight','glucose','steps','smokes','sleep','waist'].forEach(id=>d[id]=document.getElementById(id).value);setDayData(n,d);renderHome();
+}
+function saveNote(){const n=currentDay(),d=getDayData(n);d.note=document.getElementById('note').value;setDayData(n,d);renderHome()}
+function renderCalendar(n){
+ selectedDay=n;const strip=document.getElementById('daystrip');strip.innerHTML='';
+ const lo=Math.max(1,n-4),hi=Math.min(123,n+4);
+ for(let i=lo;i<=hi;i++){const b=document.createElement('div');b.className='daychip'+(i===n?' active':'');const dt=dateForDay(i);b.innerHTML=`Day ${i}<small>${dt.getMonth()+1}/${dt.getDate()}</small>`;b.onclick=()=>renderCalendar(i);strip.appendChild(b)}
+ document.getElementById('selectedTitle').textContent=`Day ${n} · ${dateForDay(n).toLocaleDateString('zh-CN',{month:'long',day:'numeric'})}`;
+ document.getElementById('selectedFocus').textContent=focusFor(n);
+ taskHTML(n,document.getElementById('selectedTasks'));
+}
+function renderStats(){
+ let reached=0,total=0,count=0,lw='—',lg='—';
+ for(let i=1;i<=123;i++){const p=pctFor(i);if(p>=80)reached++;if(getDayData(i).tasks){total+=p;count++}
+  const d=getDayData(i);if(d.weight)lw=d.weight+'kg';if(d.glucose)lg=d.glucose;
+ }
+ document.getElementById('daysPassed').textContent=reached;
+ document.getElementById('avgPct').textContent=(count?Math.round(total/count):0)+'%';
+ document.getElementById('lastWeight').textContent=lw;document.getElementById('lastGlucose').textContent=lg;
+}
+function exportData(){
+ const obj={version:2,exportedAt:new Date().toISOString(),days:{}};
+ for(let i=1;i<=123;i++){const d=getDayData(i);if(Object.keys(d).length)obj.days[i]=d}
+ const blob=new Blob([JSON.stringify(obj,null,2)],{type:'application/json'});
+ const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='90天计划备份_'+new Date().toISOString().slice(0,10)+'.json';a.click();URL.revokeObjectURL(a.href);
+}
+function importData(e){
+ const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const o=JSON.parse(r.result);Object.entries(o.days||{}).forEach(([k,v])=>setDayData(Number(k),v));alert('导入完成');renderHome()}catch(x){alert('文件格式不正确')}};r.readAsText(f);
+}
+function clearAll(){if(!confirm('确定清空全部123天数据？此操作不可撤销。'))return;for(let i=1;i<=123;i++)localStorage.removeItem(STORE+i);renderHome()}
+if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}))}
+renderHome();
+</script>
+</body>
+</html>
